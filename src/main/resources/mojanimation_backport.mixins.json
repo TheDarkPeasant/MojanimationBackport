@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.thedarkpeasant.mojanimation_backport.mixins",
+  "compatibilityLevel": "JAVA_16",
+  "refmap": "mojanimation_backport.mixins.refmap.json",
+  "mixins": [
+  ],
+  "client": [
+    "client.HierarchicalModelMixin",
+    "client.ModelPartMixin",
+    "client.PartDefinitionMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
