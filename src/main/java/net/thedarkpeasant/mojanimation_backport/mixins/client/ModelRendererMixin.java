@@ -1,10 +1,10 @@
 package net.thedarkpeasant.mojanimation_backport.mixins.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
-import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.model.geom.PartPose;
-import net.thedarkpeasant.mojanimation_backport.accessor.ModelPartAccessor;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.util.math.vector.Vector3f;
+import net.thedarkpeasant.mojanimation_backport.accessor.ModelRendererAccessor;
+import net.thedarkpeasant.mojanimation_backport.util.MBInitialPose;
 import net.thedarkpeasant.mojanimation_backport.util.MBUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ModelPart.class)
-public abstract class ModelPartMixin implements ModelPartAccessor {
+@Mixin(ModelRenderer.class)
+public abstract class ModelRendererMixin implements ModelRendererAccessor {
     @Unique
     private static final float MB$DEFAULT_SCALE = 1.0F;
     @Unique
@@ -24,7 +24,7 @@ public abstract class ModelPartMixin implements ModelPartAccessor {
     @Unique
     private float MB$zScale = MB$DEFAULT_SCALE;
     @Unique
-    private PartPose MB$initialPose = PartPose.ZERO;
+    private MBInitialPose MB$initialPose = MBInitialPose.ZERO;
 
     @Shadow
     public float x;
@@ -39,15 +39,8 @@ public abstract class ModelPartMixin implements ModelPartAccessor {
     @Shadow
     public float zRot;
 
-    @Inject(method = "loadPose", at = @At("TAIL"))
-    private void MB$injectLoadPose(PartPose pPartPose, CallbackInfo ci) {
-        this.MB$xScale = MB$DEFAULT_SCALE;
-        this.MB$yScale = MB$DEFAULT_SCALE;
-        this.MB$zScale = MB$DEFAULT_SCALE;
-    }
-
     @Inject(method = "copyFrom", at = @At("HEAD"))
-    private void MB$injectCopyFrom(ModelPart pModelPart, CallbackInfo ci) {
+    private void MB$injectCopyFrom(ModelRenderer pModelPart, CallbackInfo ci) {
         Vector3f scale = MBUtils.getScale(pModelPart);
         this.MB$xScale = scale.x();
         this.MB$yScale = scale.y();
@@ -55,19 +48,19 @@ public abstract class ModelPartMixin implements ModelPartAccessor {
     }
 
     @Inject(method = "translateAndRotate", at = @At("TAIL"))
-    private void MB$injectTranslateAndRotate(PoseStack pPoseStack, CallbackInfo ci) {
+    private void MB$injectTranslateAndRotate(MatrixStack pPoseStack, CallbackInfo ci) {
         if (this.MB$xScale != MB$DEFAULT_SCALE || this.MB$yScale != MB$DEFAULT_SCALE || this.MB$zScale != MB$DEFAULT_SCALE) {
             pPoseStack.scale(this.MB$xScale, this.MB$yScale, this.MB$zScale);
         }
     }
 
     @Override
-    public PartPose MB$getInitialPose() {
+    public MBInitialPose MB$getInitialPose() {
         return this.MB$initialPose;
     }
 
     @Override
-    public void MB$setInitialPose(PartPose pPose) {
+    public void MB$setInitialPose(MBInitialPose pPose) {
         this.MB$initialPose = pPose;
     }
 

@@ -1,6 +1,6 @@
 package net.thedarkpeasant.mojanimation_backport.entity;
 
-import net.minecraft.util.Mth;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.function.Consumer;
 
@@ -40,7 +40,7 @@ public class AnimationState {
 
     public void updateTime(float pAgeInTicks, float pSpeed) {
         if (this.isStarted()) {
-            long i = Mth.lfloor(pAgeInTicks * 1000.0F / 20.0F);
+            long i = MathHelper.lfloor(pAgeInTicks * 1000.0F / 20.0F);
             this.accumulatedTime += (long) ((float) (i - this.lastTime) * pSpeed);
             this.lastTime = i;
         }

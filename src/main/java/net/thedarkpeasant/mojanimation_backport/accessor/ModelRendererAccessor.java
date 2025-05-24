@@ -1,12 +1,12 @@
 package net.thedarkpeasant.mojanimation_backport.accessor;
 
-import com.mojang.math.Vector3f;
-import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.util.math.vector.Vector3f;
+import net.thedarkpeasant.mojanimation_backport.util.MBInitialPose;
 
-public interface ModelPartAccessor {
-    PartPose MB$getInitialPose();
+public interface ModelRendererAccessor {
+    MBInitialPose MB$getInitialPose();
 
-    void MB$setInitialPose(PartPose pPose);
+    void MB$setInitialPose(MBInitialPose pPose);
 
     Vector3f MB$getScale();
 

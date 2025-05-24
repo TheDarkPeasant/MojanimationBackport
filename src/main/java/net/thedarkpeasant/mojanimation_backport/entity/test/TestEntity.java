@@ -1,23 +1,23 @@
 package net.thedarkpeasant.mojanimation_backport.entity.test;
 
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.level.Level;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.DamageSource;
+import net.minecraft.world.World;
 import net.thedarkpeasant.mojanimation_backport.entity.AnimationState;
 
-public class TestEntity extends PathfinderMob {
-    private static final EntityDataAccessor<Integer> ANIMATION = SynchedEntityData.defineId(TestEntity.class, EntityDataSerializers.INT);
+public class TestEntity extends MobEntity {
+    private static final DataParameter<Integer> ANIMATION = EntityDataManager.defineId(TestEntity.class, DataSerializers.INT);
     public final AnimationState positionState = new AnimationState();
     public final AnimationState rotationState = new AnimationState();
     public final AnimationState scaleState = new AnimationState();
     public final AnimationState noLoopState = new AnimationState();
     public final AnimationState staticState = new AnimationState();
 
-    protected TestEntity(EntityType<? extends PathfinderMob> pEntityType, Level pLevel) {
+    protected TestEntity(EntityType<? extends MobEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
     }
 

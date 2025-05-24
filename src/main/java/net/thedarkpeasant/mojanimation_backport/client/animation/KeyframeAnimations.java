@@ -1,14 +1,11 @@
 package net.thedarkpeasant.mojanimation_backport.client.animation;
 
-import com.mojang.math.Vector3f;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.HierarchicalModel;
-import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.util.Mth;
+import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.thedarkpeasant.mojanimation_backport.accessor.HierarchicalModelAccessor;
-import net.thedarkpeasant.mojanimation_backport.util.MBUtils;
+import net.thedarkpeasant.mojanimation_backport.client.model.HierarchicalModel;
 
 import java.util.List;
 import java.util.Map;
@@ -16,24 +13,22 @@ import java.util.Optional;
 
 @OnlyIn(Dist.CLIENT)
 public class KeyframeAnimations {
-    public static void animate(EntityModel<?> pModel, AnimationDefinition pAnimationDefinition, long pAccumulatedTime, float pScale, Vector3f pAnimationVecCache) {
-        if (!(pModel instanceof HierarchicalModelAccessor) || !(pModel instanceof HierarchicalModel<?>)) return;
-
+    public static void animate(HierarchicalModel<?> pModel, AnimationDefinition pAnimationDefinition, long pAccumulatedTime, float pScale, Vector3f pAnimationVecCache) {
         float f = getElapsedSeconds(pAnimationDefinition, pAccumulatedTime);
 
         for (Map.Entry<String, List<AnimationChannel>> entry : pAnimationDefinition.boneAnimations().entrySet()) {
-            Optional<ModelPart> optional = MBUtils.getAnyDescendantWithName((HierarchicalModel<?>) pModel, entry.getKey());
+            Optional<ModelRenderer> optional = pModel.getAnyDescendantWithName(entry.getKey());
             List<AnimationChannel> list = entry.getValue();
             optional.ifPresent((part) -> list.forEach((channel) -> {
                 Keyframe[] akeyframe = channel.keyframes();
-                int i = Math.max(0, Mth.binarySearch(0, akeyframe.length, (index) -> f <= akeyframe[index].timestamp()) - 1);
+                int i = Math.max(0, MathHelper.binarySearch(0, akeyframe.length, (index) -> f <= akeyframe[index].timestamp()) - 1);
                 int j = Math.min(akeyframe.length - 1, i + 1);
                 Keyframe keyframe = akeyframe[i];
                 Keyframe keyframe1 = akeyframe[j];
                 float f1 = f - keyframe.timestamp();
                 float f2;
                 if (j != i) {
-                    f2 = Mth.clamp(f1 / (keyframe1.timestamp() - keyframe.timestamp()), 0.0F, 1.0F);
+                    f2 = MathHelper.clamp(f1 / (keyframe1.timestamp() - keyframe.timestamp()), 0.0F, 1.0F);
                 } else {
                     f2 = 0.0F;
                 }

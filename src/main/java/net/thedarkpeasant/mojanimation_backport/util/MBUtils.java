@@ -1,61 +1,75 @@
 package net.thedarkpeasant.mojanimation_backport.util;
 
-import com.mojang.math.Vector3f;
-import net.minecraft.client.model.HierarchicalModel;
-import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.model.geom.PartPose;
-import net.thedarkpeasant.mojanimation_backport.accessor.HierarchicalModelAccessor;
-import net.thedarkpeasant.mojanimation_backport.accessor.ModelPartAccessor;
-
-import java.util.Optional;
+import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.math.vector.Vector3f;
+import net.thedarkpeasant.mojanimation_backport.accessor.ModelRendererAccessor;
+import net.thedarkpeasant.mojanimation_backport.client.model.HierarchicalModel;
 
 public class MBUtils {
-    public static Optional<ModelPart> getAnyDescendantWithName(HierarchicalModel<?> pModel, String pName) {
-        if (!(pModel instanceof HierarchicalModelAccessor accessor)) return Optional.empty();
+    public static MBInitialPose getInitialPose(ModelRenderer pPart) {
+        if (!(pPart instanceof ModelRendererAccessor)) return MBInitialPose.ZERO;
 
-        return accessor.getAnyDescendantWithName(pName);
+        return ((ModelRendererAccessor) pPart).MB$getInitialPose();
     }
 
-    public static PartPose getInitialPose(ModelPart pPart) {
-        if (!((Object) pPart instanceof ModelPartAccessor)) return PartPose.ZERO;
+    public static void setInitialPose(ModelRenderer pPart, MBInitialPose pPose) {
+        if (!(pPart instanceof ModelRendererAccessor)) return;
 
-        return ((ModelPartAccessor) (Object) pPart).MB$getInitialPose();
+        ((ModelRendererAccessor) pPart).MB$setInitialPose(pPose);
     }
 
-    public static void setInitialPose(ModelPart pPart, PartPose pPose) {
-        if (!((Object) pPart instanceof ModelPartAccessor)) return;
-
-        ((ModelPartAccessor) (Object) pPart).MB$setInitialPose(pPose);
+    public static void resetPose(ModelRenderer pPart) {
+        MBInitialPose pose = getInitialPose(pPart);
+        pPart.x = pose.x;
+        pPart.y = pose.y;
+        pPart.z = pose.z;
+        pPart.xRot = pose.xRot;
+        pPart.yRot = pose.yRot;
+        pPart.zRot = pose.zRot;
+        setScale(pPart, new Vector3f(1.0F, 1.0F, 1.0F));
     }
 
-    public static Vector3f getScale(ModelPart pPart) {
-        if (!((Object) pPart instanceof ModelPartAccessor)) return new Vector3f();
+    public static void freezePose(ModelRenderer part) {
+        setInitialPose(part, new MBInitialPose(part.x, part.y, part.z, part.xRot, part.yRot, part.zRot));
 
-        return ((ModelPartAccessor) (Object) pPart).MB$getScale();
+        for (ModelRenderer child : part.children) {
+            freezePose(child);
+        }
     }
 
-    public static void setScale(ModelPart pPart, Vector3f pScale) {
-        if (!((Object) pPart instanceof ModelPartAccessor)) return;
-
-        ((ModelPartAccessor) (Object) pPart).MB$setScale(pScale);
+    public static <T extends Entity> void freezePose(HierarchicalModel<T> model) {
+        freezePose(model.root());
     }
 
-    public static void offsetPos(ModelPart pPart, Vector3f pOffset) {
-        if (!((Object) pPart instanceof ModelPartAccessor)) return;
+    public static Vector3f getScale(ModelRenderer pPart) {
+        if (!(pPart instanceof ModelRendererAccessor)) return new Vector3f(0.0F, 0.0F, 0.0F);
 
-        ((ModelPartAccessor) (Object) pPart).MB$offsetPos(pOffset);
+        return ((ModelRendererAccessor) pPart).MB$getScale();
     }
 
-    public static void offsetRotation(ModelPart pPart, Vector3f pOffset) {
-        if (!((Object) pPart instanceof ModelPartAccessor)) return;
+    public static void setScale(ModelRenderer pPart, Vector3f pScale) {
+        if (!(pPart instanceof ModelRendererAccessor)) return;
 
-        ((ModelPartAccessor) (Object) pPart).MB$offsetRotation(pOffset);
+        ((ModelRendererAccessor) pPart).MB$setScale(pScale);
     }
 
-    public static void offsetScale(ModelPart pPart, Vector3f pOffset) {
-        if (!((Object) pPart instanceof ModelPartAccessor)) return;
+    public static void offsetPos(ModelRenderer pPart, Vector3f pOffset) {
+        if (!(pPart instanceof ModelRendererAccessor)) return;
 
-        ((ModelPartAccessor) (Object) pPart).MB$offsetScale(pOffset);
+        ((ModelRendererAccessor) pPart).MB$offsetPos(pOffset);
+    }
+
+    public static void offsetRotation(ModelRenderer pPart, Vector3f pOffset) {
+        if (!(pPart instanceof ModelRendererAccessor)) return;
+
+        ((ModelRendererAccessor) pPart).MB$offsetRotation(pOffset);
+    }
+
+    public static void offsetScale(ModelRenderer pPart, Vector3f pOffset) {
+        if (!(pPart instanceof ModelRendererAccessor)) return;
+
+        ((ModelRendererAccessor) pPart).MB$offsetScale(pOffset);
     }
 
     public static float catmullrom(float pProgress, float pPrev, float pStart, float pEnd, float pNext) {

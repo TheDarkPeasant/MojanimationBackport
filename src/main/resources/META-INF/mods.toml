@@ -1,23 +1,23 @@
 modLoader="javafml"
-loaderVersion="${loader_version_range}"
-license="${mod_license}"
-
+loaderVersion="[36,)"
+license="All rights reserved"
 [[mods]]
-modId="${mod_id}"
-version="${mod_version}"
-displayName="${mod_name}"
-authors="${mod_authors}"
-description='''${mod_description}'''
-
-[[dependencies.${mod_id}]] #optional
+modId="mojanimation_backport"
+version="${file.jarVersion}"
+displayName="Mojanimation Backport"
+authors="TheDarkPeasant"
+description='''
+A backport of Mojang's keyframe animation system to 1.16.5
+'''
+[[dependencies.mojanimation_backport]]
     modId="forge"
     mandatory=true
-    versionRange="${forge_version_range}"
+    versionRange="[36,)"
     ordering="NONE"
     side="BOTH"
-[[dependencies.${mod_id}]]
+[[dependencies.mojanimation_backport]]
     modId="minecraft"
     mandatory=true
-    versionRange="${minecraft_version_range}"
+    versionRange="[1.16.5,1.17)"
     ordering="NONE"
     side="BOTH"

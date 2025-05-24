@@ -1,40 +1,63 @@
 package net.thedarkpeasant.mojanimation_backport.client.animation;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import java.util.List;
-import java.util.Map;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.apache.commons.compress.utils.Lists;
+
+import java.util.List;
+import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
-public record AnimationDefinition(float lengthInSeconds, boolean looping, Map<String, List<AnimationChannel>> boneAnimations) {
-   @OnlyIn(Dist.CLIENT)
-   public static class Builder {
-      private final float length;
-      private final Map<String, List<AnimationChannel>> animationByBone = Maps.newHashMap();
-      private boolean looping;
+public class AnimationDefinition {
+    private final float lengthInSeconds;
+    private final boolean looping;
+    private final Map<String, List<AnimationChannel>> boneAnimations;
 
-      public static Builder withLength(float pLengthInSeconds) {
-         return new Builder(pLengthInSeconds);
-      }
+    public AnimationDefinition(float lengthInSeconds, boolean looping, Map<String, List<AnimationChannel>> boneAnimations) {
+        this.lengthInSeconds = lengthInSeconds;
+        this.looping = looping;
+        this.boneAnimations = boneAnimations;
+    }
 
-      private Builder(float pLengthInSeconds) {
-         this.length = pLengthInSeconds;
-      }
+    public float lengthInSeconds() {
+        return lengthInSeconds;
+    }
 
-      public Builder looping() {
-         this.looping = true;
-         return this;
-      }
+    public boolean looping() {
+        return looping;
+    }
 
-      public Builder addAnimation(String pBone, AnimationChannel pAnimationChannel) {
-         this.animationByBone.computeIfAbsent(pBone, (s) -> Lists.newArrayList()).add(pAnimationChannel);
-         return this;
-      }
+    public Map<String, List<AnimationChannel>> boneAnimations() {
+        return boneAnimations;
+    }
 
-      public AnimationDefinition build() {
-         return new AnimationDefinition(this.length, this.looping, this.animationByBone);
-      }
-   }
+    @OnlyIn(Dist.CLIENT)
+    public static class Builder {
+        private final float length;
+        private final Map<String, List<AnimationChannel>> animationByBone = Maps.newHashMap();
+        private boolean looping;
+
+        public static Builder withLength(float pLengthInSeconds) {
+            return new Builder(pLengthInSeconds);
+        }
+
+        private Builder(float pLengthInSeconds) {
+            this.length = pLengthInSeconds;
+        }
+
+        public Builder looping() {
+            this.looping = true;
+            return this;
+        }
+
+        public Builder addAnimation(String pBone, AnimationChannel pAnimationChannel) {
+            this.animationByBone.computeIfAbsent(pBone, (s) -> Lists.newArrayList()).add(pAnimationChannel);
+            return this;
+        }
+
+        public AnimationDefinition build() {
+            return new AnimationDefinition(this.length, this.looping, this.animationByBone);
+        }
+    }
 }
