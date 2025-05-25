@@ -3,8 +3,9 @@ loaderVersion="[36,)"
 license="All rights reserved"
 [[mods]]
 modId="mojanimation_backport"
-version="${file.jarVersion}"
+version="1.0.0"
 displayName="Mojanimation Backport"
+logoFile = "logo.png"
 authors="TheDarkPeasant"
 description='''
 A backport of Mojang's keyframe animation system to 1.16.5
